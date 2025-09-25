@@ -6,14 +6,25 @@ using UnityEngine.UI;
 
 public class UIHealthbar : MonoBehaviour
 {
+    [SerializeField] private LifeController life;
     [SerializeField] private Image fill;
     [SerializeField] private TextMeshProUGUI lifeText;
     [SerializeField] private Gradient grad;
 
-    public void UpdateGraphics(int currentHp, int maxHp)
+    private void Start()
     {
-        lifeText.text = $"HP: {currentHp}/{maxHp}";
-        fill.fillAmount = (float)currentHp / maxHp;
-        fill.color = grad.Evaluate((float)currentHp / maxHp);
+        life.AddLifeListener(UpdateGraphics);
+    }
+
+    private void OnDestroy()
+    {
+        life.RemoveLifeListener(UpdateGraphics);
+    }
+
+    public void UpdateGraphics(float currentHp, float maxHp)
+    {
+        lifeText.text = $"HP: {currentHp} / {maxHp}";
+        fill.fillAmount = currentHp / maxHp;
+        fill.color = grad.Evaluate(currentHp / maxHp);
     }
 }

@@ -1,3 +1,4 @@
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,24 +7,16 @@ using UnityEngine.SceneManagement;
 
 public class LifeController : MonoBehaviour
 {
-    [SerializeField] private int maxHp = 10;
-    [SerializeField] private int currentHp = 10;
+    [SerializeField] private float maxHp = 10;
+    [SerializeField] private float currentHp = 10;
     [SerializeField] private bool fullHpOnAwake = true;
     [SerializeField] private DeathAction death = DeathAction.Destroy;
-   
-    public int GetMax() => maxHp;
-    public int GetHp() => currentHp;
-
-    [SerializeField] private UnityEvent<int, int> onLifeChanged;
+    [SerializeField] private event Action<float, float> onLifeChanged;
     [SerializeField] private UnityEvent onDeath;
 
-    private void Awake()
-    {
-        if (fullHpOnAwake)
-        {
-            SetHp(maxHp);
-        }
-    }
+
+    public float GetMax() => maxHp;
+    public float GetHp() => currentHp;
 
     public enum DeathAction
     {
@@ -55,23 +48,44 @@ public class LifeController : MonoBehaviour
     }
 
 
-    public void SetHp(int hp)
+
+    private void Awake()
     {
-        int oldHp = currentHp;
+        if (fullHpOnAwake)
+        {
+            SetHp(maxHp);
+        }
+    }
+
+    public void SetHp(float hp)
+    {
+        float oldHp = currentHp;
         currentHp = Mathf.Clamp(hp, 0, maxHp);
 
         Debug.Log($"HP aggiornati: {currentHp}/{maxHp}");
         onLifeChanged?.Invoke(currentHp, maxHp);
 
+
         if (oldHp > 0 && currentHp == 0)
         {
-            Debug.Log($"Il personaggio {gameObject.name} è deceduto");
+            Debug.Log($"Il personaggio {gameObject.name} ï¿½ deceduto");
             HandleDeath();
+
         }
     }
 
-    public void AddHp(int amount)
+    public void AddHp(float amount)
     {
         SetHp(currentHp + amount);
+    }
+
+    public void AddLifeListener(Action<float, float> callback)
+    {
+        onLifeChanged += callback;
+    }
+
+    public void RemoveLifeListener(Action<float, float> callback)
+    {
+        onLifeChanged -= callback;
     }
 }
