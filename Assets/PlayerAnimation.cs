@@ -1,79 +1,77 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using static PlayerMovement;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    private Animator animator;
-    private Rigidbody rb;
-    private PlayerMovement playerMovement;
-    private float lastYRotation;
-    private bool doubleJumpTriggered = false;
-    [SerializeField]private GroundChecker groundChecker;
+    [Header("Referenze")]
+    [SerializeField] private PlayerMovement player; 
+    [SerializeField] private Animator animator;
+    [SerializeField] private Rigidbody rb;
 
-    void Start()
+
+    private Vector3 lastVelocity;
+
+    private void Awake()
     {
         animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
-        playerMovement = GetComponent<PlayerMovement>();
-        lastYRotation = transform.eulerAngles.y;
+        player = GetComponent<PlayerMovement>();    
+
     }
 
-    void Update()
+    private void Update()
     {
-        HandleMovementAnimations();
+        if (!player) return;
+
+        UpdateMovementAnimation();
+        UpdateJumpAnimation();
+        UpdateFallAnimation();
+        UpdateLandingAnimation();
     }
 
-    void HandleMovementAnimations()
+    private void UpdateMovementAnimation()
+    {
+    
+        Vector3 flatVel = new Vector3(player.Rb.velocity.x, 0f, player.Rb.velocity.z);
+        float speed = flatVel.magnitude;
+
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("IsGrounded", player.groundChecker.IsGroundedAny());
+    }
+
+    private void UpdateJumpAnimation()
     {
        
-        Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        float speed = horizontalVelocity.magnitude;
-        animator.SetFloat("Speed", speed);
-
-        Vector3 verticalVelocity = new Vector3(0, rb.velocity.y, 0);
-        float vSpeed = horizontalVelocity.magnitude;
-        animator.SetFloat("VSpeed", vSpeed);
-
-        bool isGrounded = playerMovement.groundChecker.IsGroundedAny();
-        animator.SetBool("IsGrounded", isGrounded);
-
-        float turnValue = 0f;
-        if (speed < 0.1f)
-        {
-            float currentY = transform.eulerAngles.y;
-            float delta = Mathf.DeltaAngle(lastYRotation, currentY);
-            turnValue = Mathf.Clamp(delta / (Time.deltaTime * 180f), -1f, 1f);
-        }
-        //animator.SetFloat("Turn", turnValue);
-        lastYRotation = transform.eulerAngles.y;
+        animator.SetBool("IsJumping", player.isJumping);
 
       
-        if (!isGrounded && rb.velocity.y > 0.1f)
+        if (player.state == PlayerMovement.MovementState.DoubleJump)
         {
-           
-            if (playerMovement.JumpCount == 1 && !doubleJumpTriggered)
-            {
-                animator.SetTrigger("DoubleJump");
-                doubleJumpTriggered = true;
-            }
+            animator.SetTrigger("DoubleJump");
         }
 
-        if (isGrounded)
-        {
-            doubleJumpTriggered = false;
-        }
-
-        animator.SetBool("IsFalling", rb.velocity.y < -0.1f);
-
-        if (isGrounded && rb.velocity.y < 0f)
-            animator.SetTrigger("Land");
-
-        //if (playerMovement.state != PlayerMovement.MovementState.wallrunning)
-        //    animator.SetBool("IsWallRunning", false);
-
-        //if (playerMovement.state != PlayerMovement.MovementState.wallstick)
-        //    animator.SetBool("IsWallSticking", false);
     }
+
+    private void UpdateFallAnimation()
+    {
+        
+        bool isInAir = !player.groundChecker.IsGroundedAny();
+        bool isFalling = player.Rb.velocity.y < -0.1f;
+
+        animator.SetBool("IsFalling", isInAir && isFalling);
+    }
+
+    private void UpdateLandingAnimation()
+    {
+   
+        bool wasInAir = lastVelocity.y > 0.1f || lastVelocity.y < -0.1f;
+        bool isGrounded = player.groundChecker.IsGroundedAny();
+
+        if (wasInAir && isGrounded)
+        {
+            animator.SetTrigger("Land");
+        }
+
+        lastVelocity = player.Rb.velocity;
+    }
+
 }

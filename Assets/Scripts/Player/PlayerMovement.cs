@@ -7,41 +7,42 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    private float speed;
-    public float walkSpeed;
-    public float sprintSpeed;
-    public float groundDrag;
-    public float jumpForce;
-    public float airMultiplier;
-    
-    [Header("Ground Check")]
-    public GroundChecker groundChecker;
+    public float walkSpeed = 5f;
+    public float sprintSpeed = 8f;
+    public float groundDrag = 6f;
+    public float jumpForce = 7f;
+    public float acceleration = 10f;
+    public float airMultiplier = 0.5f;
+
+    [Header("Jump")]
+    public int maxJumpCount = 1;
+    public float coyoteTime = 0.2f;
+
 
     public Transform orientation;
+    public GroundChecker groundChecker;
 
+    private Rigidbody rb;
     private int jumpCount;
-    public int JumpCount => jumpCount;
-
-    private int maxJumpCount = 1;
+    private float coyoteTimeCounter;
     private float horizontalInput;
     private float verticalInput;
+    private Vector3 moveDirection;
+    public bool isJumping;
 
-    Vector3 moveDirection;
-    Rigidbody rb;
     public MovementState state;
+
+    public Rigidbody Rb => rb;
 
     public enum MovementState
     {
-        
-        walking,
-        sprinting,
-        air,
-        wallrunning,
-        wallstick
+        Walking,
+        Sprinting,
+        Air,
+        Jump,
+        DoubleJump,
+        Land
     }
-
-    public bool wallrunning;
-    public bool wallstick;
 
     private void Start()
     {
@@ -51,14 +52,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-       
-
-        ResetJump();
-        MyInput();
-        SpeedControl();
-        StateHandler();
-        
-        rb.drag = groundChecker.IsGroundedAny() ? groundDrag : 0;
+        HandleInput();
+        HandleState();
+        HandleJumpReset();
+        ApplyDrag();
     }
 
     private void FixedUpdate()
@@ -67,83 +64,133 @@ public class PlayerMovement : MonoBehaviour
         RotatePlayer();
     }
 
-    private void RotatePlayer()
+    private void HandleInput()
     {
-        Vector3 direction = new Vector3(moveDirection.x, 0f, moveDirection.z);
-
-        if (direction.magnitude > 0.1f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-        }
-    }
-
-    private void MyInput()
-    {
-        
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetButtonDown("Jump") && jumpCount < maxJumpCount)
+        if (Input.GetButtonDown("Jump") && (jumpCount < maxJumpCount || coyoteTimeCounter > 0f))
         {
-            Jump();
-            jumpCount++;
-        }
+            if (jumpCount == 2)
+                isJumping = false;
+                state = MovementState.DoubleJump;
 
+            jumpCount++;
+            isJumping = true;  
+            Jump();
+
+        }
     }
 
-    private void StateHandler()
+    private void HandleState()
     {
 
-        if (groundChecker.IsGroundedAny() && Input.GetButtonDown("Run"))
+        switch (state)
         {
-            state = MovementState.sprinting;
-            speed = sprintSpeed;
+            case MovementState.Walking:
+            case MovementState.Sprinting:
+                if (!groundChecker.IsGroundedAny())
+                {
+                    state = MovementState.Air;
+                }
+                else if (Input.GetButton("Run"))
+                {
+                    state = MovementState.Sprinting;
+                }
+                else
+                {
+                    state = MovementState.Walking;
+                }
+                break;
+
+            case MovementState.DoubleJump:
+                if (rb.velocity.y < 0f)
+                {
+                    state = MovementState.Air;
+                }
+                break;
+
+            case MovementState.Air:
+                if (groundChecker.IsGroundedAny())
+                {
+                    state = MovementState.Land;
+                    isJumping = false;
+                }
+                break;
+
+            case MovementState.Land:
+                if (groundChecker.IsGroundedAny())
+                {
+                    if (Input.GetButton("Run"))
+                        state = MovementState.Sprinting;
+                    else
+                        state = MovementState.Walking;
+                }
+                break;
+
+            default:
+                state = MovementState.Walking;
+                break;
+
         }
-        else if (groundChecker.IsGroundedAny())
+    }
+
+    private void HandleJumpReset()
+    {
+        if (groundChecker.IsGroundedAny())
         {
-            state = MovementState.walking;
-            speed = walkSpeed;
+            coyoteTimeCounter = coyoteTime;
+            jumpCount = 0;
         }
         else
         {
-            state = MovementState.air;
+            coyoteTimeCounter -= Time.deltaTime;
         }
+    }
+
+    private void ApplyDrag()
+    {
+        rb.drag = groundChecker.IsGroundedAny() ? groundDrag : 0f;
     }
 
     private void MovePlayer()
     {
-
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        
-        if (groundChecker.IsGroundedAny())
-            rb.AddForce(moveDirection.normalized * speed * 10f, ForceMode.Force);
-        else if (!groundChecker.IsGroundedAny())
-            rb.AddForce(moveDirection.normalized * speed * 10f * airMultiplier, ForceMode.Force);
+        float targetSpeed = (state == MovementState.Sprinting) ? sprintSpeed : walkSpeed;
+        Vector3 force = moveDirection.normalized * targetSpeed * acceleration;
+
+        if (!groundChecker.IsGroundedAny())
+            force *= airMultiplier;
+
+        rb.AddForce(force, ForceMode.Force);
+
+        LimitSpeed(targetSpeed);
     }
 
-    private void SpeedControl()
+    private void LimitSpeed(float targetSpeed)
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-       
-        if (flatVel.magnitude > speed)
+        if (flatVel.magnitude > targetSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * speed;
+            Vector3 limitedVel = Vector3.Lerp(flatVel, flatVel.normalized * targetSpeed, Time.deltaTime * acceleration);
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+        }
+    }
+
+    private void RotatePlayer()
+    {
+        Vector3 direction = new Vector3(moveDirection.x, 0f, moveDirection.z);
+        if (direction.magnitude > 0.1f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * acceleration);
         }
     }
 
     private void Jump()
     {
-        
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-    }
-
-    private void ResetJump()
-    {
-        if (groundChecker.IsGroundedAny()) jumpCount = 0;
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 }

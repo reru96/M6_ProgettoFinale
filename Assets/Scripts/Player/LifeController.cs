@@ -68,7 +68,7 @@ public class LifeController : MonoBehaviour
 
         if (oldHp > 0 && currentHp == 0)
         {
-            Debug.Log($"Il personaggio {gameObject.name} � deceduto");
+            Debug.Log($"Il personaggio {gameObject.name} deceduto");
             HandleDeath();
 
         }
