@@ -171,6 +171,7 @@ MonoBehaviour:
   coyoteTime: 0.2
   orientation: {fileID: 2678177026524713335}
   groundChecker: {fileID: 2466595590990404200}
+  isJumping: 0
   state: 0
 --- !u!95 &3159315834676773734
 Animator:

@@ -15,32 +15,35 @@ public class Turret : MonoBehaviour
     [SerializeField] protected float nextFireTime;
     [SerializeField] protected float bulletMaxDistance;
     [SerializeField] protected float spreadAngle;
-    [SerializeField] protected GameObject zone;
+    [SerializeField] protected string turretSfx = "Shoot";
+    //[SerializeField] protected GameObject zone;
+    [SerializeField] protected VisioneCone visionCone;
     protected bool isRanged = false;
+
 
     protected virtual void Start()
     {
+        visionCone = GetComponentInChildren<VisioneCone>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     protected virtual void Update()
     {
-        if (!isRanged) return;
-
-        
+        if (visionCone.isVisible == true)
+        {
             distance = Vector3.Distance(player.position, transform.position);
             if (distance <= maxDistance)
             {
-                firePoint.LookAt(player);
                 if (Time.time >= nextFireTime)
                 {
+                    AudioManager.Instance.PlaySfx(turretSfx);
                     Shoot(0f);
                     nextFireTime = Time.time + 1f / fireRate;
                 }
 
                 VanishActiveBullets();
             }
-        
+        }
     }
 
     protected virtual void VanishActiveBullets()
@@ -70,22 +73,22 @@ public class Turret : MonoBehaviour
         }
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-       
-        if(other.CompareTag("Player"))
-        { 
-           isRanged = true;
-           
-        }
-    } 
-   
-    protected virtual void OnTriggerExit(Collider other)
-    {
-      
-        if(other.CompareTag("Player"))
-        {   
-            isRanged = false;
-        }
-    }
+    //protected virtual void OnTriggerEnter(Collider other)
+    //{
+
+    //    if(other.CompareTag("Player"))
+    //    { 
+    //       isRanged = true;
+
+    //    }
+    //} 
+
+    //protected virtual void OnTriggerExit(Collider other)
+    //{
+
+    //    if(other.CompareTag("Player"))
+    //    {   
+    //        isRanged = false;
+    //    }
+    //}
 }

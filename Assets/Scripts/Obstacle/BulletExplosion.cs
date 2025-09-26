@@ -8,11 +8,6 @@ public class BulletExplosion : Bullet
     [SerializeField] protected bool isExploded = false;
     //[SerializeField] protected Animator anim;
 
-    protected override void Start()
-    {
-        base.Start();
-        //anim = GetComponent<Animator>();
-    }
     protected override void OnTriggerEnter(Collider collision)
     {
 

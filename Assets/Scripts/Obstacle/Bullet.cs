@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -7,7 +8,7 @@ public class Bullet : MonoBehaviour
     protected Rigidbody rb;
     [SerializeField] protected float speed = 5f;
     [SerializeField] protected int damage = 1;
-    [SerializeField] protected float lifetime = 10f;
+    [SerializeField] protected float lifetime = 3f;
  
     protected float despawnTime;
     protected float Speed => speed;
@@ -20,14 +21,19 @@ public class Bullet : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    protected virtual void Start()
-    { 
-        if(Time.time >= lifetime)
-        {
-            gameObject.SetActive(false);
-        }
-    }
     protected virtual void OnEnable()
+    {  
+       StartCoroutine(IsVanishedBullet());
+    }
+
+    public IEnumerator IsVanishedBullet()
+    { 
+    
+        yield return new WaitForSeconds(lifetime);    
+        gameObject.SetActive(false);
+    }
+
+    protected virtual void Update()
     {
         rb.velocity = transform.forward * speed;
     }

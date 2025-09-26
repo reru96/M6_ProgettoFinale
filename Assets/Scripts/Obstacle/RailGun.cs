@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RailGun : Turret
 {
+    private Transform zone;
     private Renderer mat;
 
     protected override void Start()
@@ -15,7 +16,7 @@ public class RailGun : Turret
         }
     }
 
-    protected override void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && mat != null)
         {
@@ -24,7 +25,7 @@ public class RailGun : Turret
         }
     }
 
-    protected override void OnTriggerExit(Collider other)
+    protected void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player") && mat != null)
         {

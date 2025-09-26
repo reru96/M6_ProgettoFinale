@@ -56,6 +56,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2765403810295717362}
+  - component: {fileID: 7684573953671073991}
   m_Layer: 0
   m_Name: firePoint
   m_TagString: Untagged
@@ -78,6 +79,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6931392674852122272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7684573953671073991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082919564722805134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcd57ccf164d3b644aa2d04da70a3e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewDistance: 10
+  viewAngle: 45
+  horizontalRayCount: 20
+  verticalRayCount: 10
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  isVisible: 0
 --- !u!1001 &4391530243112334699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -217,7 +238,7 @@ MonoBehaviour:
   nextFireTime: 0.25
   bulletMaxDistance: 30
   spreadAngle: 0
-  zone: {fileID: 0}
+  visionCone: {fileID: 7684573953671073991}
 --- !u!4 &4286125025094079104 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6bf832923ec2c62499bda0af931850a6,

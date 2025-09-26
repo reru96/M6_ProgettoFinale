@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
+    [SerializeField] private string gemSfx = "Gem";
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            AudioManager.Instance.PlaySfx(gemSfx);
             GameObject manager = GameObject.FindGameObjectWithTag("GemManager"); 
             if (manager != null)
             {

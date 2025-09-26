@@ -17,3 +17,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 7a69854d19f56b0429071d8f2d42721c, type: 3}
   - key: Level1
     clip: {fileID: 8300000, guid: d5df970c57078c44b80c53453537360c, type: 3}
+  - key: Shoot
+    clip: {fileID: 8300000, guid: 64f5e98bee4048844908289e3cf467a1, type: 3}
+  - key: Gem
+    clip: {fileID: 8300000, guid: e8890fedd4b099440a2c29272bea01de, type: 3}
