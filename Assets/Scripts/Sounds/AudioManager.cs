@@ -10,10 +10,10 @@ public class AudioManager : Singleton<AudioManager>
 {
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer audioMixer;
-    [SerializeField] private string musicVolume = "MusicVolume";
-    [SerializeField] private string sfxVolume = "SfxVolume";
+    [SerializeField] private string musicVolumeParam = "MusicVolume";
+    [SerializeField] private string sfxVolumeParam = "SfxVolume";
 
-    [Header("AudioSource")]
+    [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
 
@@ -21,28 +21,31 @@ public class AudioManager : Singleton<AudioManager>
     [SerializeField] private AudioLibrary audioLibrary;
     [SerializeField] private SceneMusicLibrary sceneMusicLibrary;
 
+    private Dictionary<string, AudioClip> audioDict = new Dictionary<string, AudioClip>();
+    private Dictionary<string, string> sceneMusicDict = new Dictionary<string, string>();
 
-    private Dictionary<string,AudioClip> audioDict = new Dictionary<string,AudioClip>();
-    private Dictionary<string,string> sceneMusicDict = new Dictionary<string,string>();
+    protected override bool ShouldBeDestroyedOnLoad() => false;
 
     protected override void Awake()
     {
         base.Awake();
 
-        if(musicSource == null)
+
+        if (musicSource == null)
         {
-            musicSource.AddComponent<AudioSource>();
+            musicSource = gameObject.AddComponent<AudioSource>();
             musicSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Music")[0];
             musicSource.loop = true;
         }
 
-        if(sfxSource == null)
+        if (sfxSource == null)
         {
-            sfxSource.AddComponent<AudioSource>();
+            sfxSource = gameObject.AddComponent<AudioSource>();
             sfxSource.outputAudioMixerGroup = audioMixer.FindMatchingGroups("Sfx")[0];
         }
 
-        if (audioDict != null)
+
+        if (audioLibrary != null)
         {
             foreach (var entry in audioLibrary.clips)
             {
@@ -61,10 +64,17 @@ public class AudioManager : Singleton<AudioManager>
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+
     }
 
     private void Start()
     {
+        SaveData saveData = SaveManager.Load();
+
+        SetMusicVolume(saveData.musicVolume);
+        SetSfxVolume(saveData.sfxVolume);
+
+
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
     protected override void OnDestroy()
@@ -81,25 +91,22 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    public void PlayMusic(string key, float volume = 1f)
+    public void PlayMusic(string key)
     {
         if (audioDict.TryGetValue(key, out var clip))
         {
             musicSource.clip = clip;
-            musicSource.volume = volume;
             musicSource.Play();
         }
     }
 
     public void StopMusic() => musicSource.Stop();
 
-    public void StopSfx() => sfxSource.Stop();
-
-    public void PlaySfx(string key, float volume = 1f)
+    public void PlaySfx(string key)
     {
         if (audioDict.TryGetValue(key, out var clip))
         {
-            sfxSource.PlayOneShot(clip, volume);
+            sfxSource.PlayOneShot(clip);
         }
     }
 
@@ -110,8 +117,14 @@ public class AudioManager : Singleton<AudioManager>
         return null;
     }
 
-    public void SetVolume(float volume, string musicGroup)
+    public void SetMusicVolume(float volume)
     {
-        audioMixer.SetFloat(musicGroup, Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f);
+        audioMixer.SetFloat(musicVolumeParam, Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f);
     }
+
+    public void SetSfxVolume(float volume)
+    {
+        audioMixer.SetFloat(sfxVolumeParam, Mathf.Log10(Mathf.Clamp(volume, 0.0001f, 1f)) * 20f);
+    }
+
 }
