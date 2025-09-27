@@ -119,6 +119,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df1fd2398e326744596a685148396370, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemSfx: Gem
+  gemData: {fileID: 11400000, guid: 54eba350e62acdd4583d2b50ea65d11f, type: 2}
 --- !u!54 &3087814797384625586
 Rigidbody:
   m_ObjectHideFlags: 0

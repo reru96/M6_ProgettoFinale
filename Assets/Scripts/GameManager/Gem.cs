@@ -5,6 +5,8 @@ using UnityEngine;
 public class Gem : MonoBehaviour
 {
     [SerializeField] private string gemSfx = "Gem";
+    public GemSO gemData;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

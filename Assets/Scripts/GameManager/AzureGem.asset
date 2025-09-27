@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a02ec60575b8af45a7a6cd68eebb4b5, type: 3}
+  m_Name: AzureGem
+  m_EditorClassIdentifier: 
+  nameGem: Space Gem
+  gemPrefab: {fileID: 8820959340008253483, guid: 43f048b6a50aac84cbd0e3594d06fe26,
+    type: 3}
+  gemPrefabUI: {fileID: 5933031166309758007, guid: 0a547d758be879441971314d2208ed5e,
+    type: 3}
+  id: 1

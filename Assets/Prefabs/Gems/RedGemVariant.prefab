@@ -13,6 +13,12 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2d2691604f70c6244af82b1f739f0ca8, type: 2}
+    - target: {fileID: 5456199973093558812, guid: 43f048b6a50aac84cbd0e3594d06fe26,
+        type: 3}
+      propertyPath: gemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a06b872c2b6ed74eb7390102d0b5015,
+        type: 2}
     - target: {fileID: 5785623496821840888, guid: 43f048b6a50aac84cbd0e3594d06fe26,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -66,7 +72,7 @@ PrefabInstance:
     - target: {fileID: 8820959340008253483, guid: 43f048b6a50aac84cbd0e3594d06fe26,
         type: 3}
       propertyPath: m_Name
-      value: Gem (1) Variant
+      value: RedGemVariant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

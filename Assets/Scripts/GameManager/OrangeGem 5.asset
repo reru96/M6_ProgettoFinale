@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a02ec60575b8af45a7a6cd68eebb4b5, type: 3}
+  m_Name: OrangeGem 5
+  m_EditorClassIdentifier: 
+  nameGem: Soul Gem
+  gemPrefab: {fileID: 4927013095225760233, guid: c5b421b326d920047b2553efd62c0fb3,
+    type: 3}
+  gemPrefabUI: {fileID: 2127208654048238667, guid: 841cb37c7d0e15f46b69a894ec5363a3,
+    type: 3}
+  id: 6

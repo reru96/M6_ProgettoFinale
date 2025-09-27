@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a02ec60575b8af45a7a6cd68eebb4b5, type: 3}
+  m_Name: GreenGem 3
+  m_EditorClassIdentifier: 
+  nameGem: Time Gem
+  gemPrefab: {fileID: 8334835803552137608, guid: f12c8d999d31a5a42b67d1422ee88e2f,
+    type: 3}
+  gemPrefabUI: {fileID: 32055220256166261, guid: 6f2877869cc1c944cbe3b2ef686cf7a4,
+    type: 3}
+  id: 4

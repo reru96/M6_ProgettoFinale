@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DeadEnd : MonoBehaviour
 {
-    public Transform firstRespawnPoint;
 
     private void OnCollisionEnter(Collision other)
     {
@@ -14,15 +13,9 @@ public class DeadEnd : MonoBehaviour
         GemCollector collector = collectorObj.GetComponent<GemCollector>();
         Vector3 lastPos = collector.GetLastGemPosition();
 
-        if (collector.CollectedGems > 0)
-        {
-
-            other.transform.position = lastPos + Vector3.up * 2;
-        }
-        else
-        {
-            other.transform.position = firstRespawnPoint.position;
-        }
+       
+        other.transform.position = lastPos + Vector3.up * 2;
+      
     }
 }
 

@@ -8,8 +8,9 @@ public class GemCollector : MonoBehaviour
     public GameObject portal;
     public string nextSceneName = "Level2";
     public Sprite gemSprite;
+    public Transform firstRespawnPoint;
 
-    public GameObject[] gemUIPrefab;   
+    public Transform gemPanel;     
 
     private int totalGems;
     private int collectedGems;
@@ -27,56 +28,37 @@ public class GemCollector : MonoBehaviour
         if (portal != null)
             portal.SetActive(collectedGems >= totalGems);
 
-       
-        for (int i = 0; i < collectedGems && i < gemUIPrefab.Length; i++)
-        {
-            if (gemUIPrefab[i] != null)
-            {
-                gemUIPrefab[i].SetActive(true);
-                Image img = gemUIPrefab[i].GetComponent<Image>();
-                if (img != null && gemSprite != null)
-                {
-                    img.sprite = gemSprite;
-                    img.enabled = true;
-                }
-            }
-        }
     }
 
-    public void CollectGem(GameObject gem)
+    public void CollectGem(GameObject gemObj)
     {
-        lastGemPosition = gem.transform.position;
-        Destroy(gem);
+        Gem gem = gemObj.GetComponent<Gem>();
+        if (gem == null) return;
+
+        lastGemPosition = gemObj.transform.position;
+        Destroy(gemObj);
         collectedGems++;
 
-       
-        SaveData data = new SaveData { collectedGems = collectedGems };
-        SaveManager.Save(data);
-
-        if (gemUIPrefab != null && collectedGems <= gemUIPrefab.Length)
-        {
-            GameObject gemUI = gemUIPrefab[collectedGems - 1];
-            if (gemUI != null)
-            {
-                gemUI.SetActive(true);
-
-                Image img = gemUI.GetComponent<Image>();
-                if (img != null && gemSprite != null)
-                {
-                    img.sprite = gemSprite;
-                    img.enabled = true;
-                }
-            }
-        }
+        Instantiate(gem.gemData.gemPrefabUI, gemPanel);
+        
 
         if (collectedGems >= totalGems && portal != null)
         {
             portal.SetActive(true);
         }
+
+        SaveData data = new SaveData { collectedGems = collectedGems };
+        SaveManager.Save(data);
     }
 
     public Vector3 GetLastGemPosition()
     {
+        if (collectedGems == 0)
+        {   
+
+            lastGemPosition = firstRespawnPoint.transform.localPosition;
+            
+        }
         return lastGemPosition;
     }
 }
