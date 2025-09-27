@@ -4,34 +4,35 @@ using UnityEngine;
 
 public class TurretSpread : Turret
 {
-   [SerializeField] private ObjectPoolManager poolS;
+
     protected override void Update()
     {
-        if (!isRanged) return;
 
-        distance = Vector3.Distance(player.position, transform.position);
-        if (distance <= maxDistance)
+        if (visionCone.isVisible)
         {
-          
-            if (Time.time >= nextFireTime)
+            distance = Vector3.Distance(player.position, transform.position);
+            if (distance <= maxDistance)
             {
-                Vector3 baseDirection = (player.position - firePoint.position).normalized;
 
-                ShootWithDirection(baseDirection, 0f);              
-                ShootWithDirection(baseDirection, +spreadAngle);   
-                ShootWithDirection(baseDirection, -spreadAngle);    
+                if (Time.time >= nextFireTime)
+                {
+                    Vector3 baseDirection = (player.position - firePoint.position).normalized;
 
-                nextFireTime = Time.time + 1f / fireRate;
+                    ShootWithDirection(baseDirection, 0f);
+                    ShootWithDirection(baseDirection, +spreadAngle);
+                    ShootWithDirection(baseDirection, -spreadAngle);
+
+                    nextFireTime = Time.time + 1f / fireRate;
+                }
+
+                VanishActiveBullets();
             }
-
-            VanishActiveBullets();
         }
     }
 
-    // Nuovo metodo per gestire la direzione
     private void ShootWithDirection(Vector3 baseDirection, float angle)
     {
-        GameObject bullet = poolS.GetPooledObject();
+        GameObject bullet = poolManager.GetPooledObject();
         if (bullet == null) return;
 
         Quaternion spreadRot = Quaternion.AngleAxis(angle, Vector3.up);

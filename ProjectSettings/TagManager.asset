@@ -11,6 +11,8 @@ TagManager:
   - Gem
   - Hook
   - Ground
+  - FirstRespawn
+  - DeadZone
   layers:
   - Default
   - TransparentFX

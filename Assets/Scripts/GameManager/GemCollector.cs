@@ -21,6 +21,8 @@ public class GemCollector : MonoBehaviour
     void Start()
     {
         totalGems = GameObject.FindGameObjectsWithTag("Gem").Length;
+       
+        collectedGems = 0;
 
         SaveData data = SaveManager.Load();
         collectedGems = data.collectedGems;
@@ -54,7 +56,8 @@ public class GemCollector : MonoBehaviour
     public Vector3 GetLastGemPosition()
     {
         if (collectedGems == 0)
-        {   
+        {
+            Debug.Log("numero di gemme: " + collectedGems);
 
             lastGemPosition = firstRespawnPoint.transform.localPosition;
             
