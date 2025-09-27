@@ -29,7 +29,7 @@ public class MainMenu : MonoBehaviour
     {
 
         SaveData newSave = new SaveData();
-        newSave.gems = 0;
+        newSave.collectedGems = 0;
         newSave.sceneIndex = 1;
         newSave.playerX = 0f;
         newSave.playerY = 0f;
@@ -39,11 +39,6 @@ public class MainMenu : MonoBehaviour
 
         SaveManager.Save(newSave);
 
-
-        //if (CoinManager.Instance != null)
-        //{
-        //    CoinManager.Instance.SetCoins(0);
-        //}
         SceneManager.LoadScene(1);
     }
 
