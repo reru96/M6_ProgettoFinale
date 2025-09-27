@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class DeadEnd : MonoBehaviour
 {
-    //public ParticleSystem fogEffect;
+    public Transform firstRespawnPoint;
 
-    //public void Start()
-    //{
-    //    fogEffect.Play();
-    //}
     private void OnCollisionEnter(Collision other)
     {
         LifeController life = other.gameObject.GetComponent<LifeController>();
-        life.SetHp(0);
+        life.AddHp(-5);  
+        GameObject collectorObj = GameObject.FindGameObjectWithTag("GemManager");
+        GemCollector collector = collectorObj.GetComponent<GemCollector>();
+        Vector3 lastPos = collector.GetLastGemPosition();
+
+        if (collector.CollectedGems > 0)
+        {
+
+            other.transform.position = lastPos + Vector3.up * 2;
+        }
+        else
+        {
+            other.transform.position = firstRespawnPoint.position;
+        }
     }
-    //private void OnCollisionExit(Collision other)
-    //{
-
-    //    if (fogEffect)
-    //        fogEffect.Stop();
-
-    //}
-
 }
+
+
+
+

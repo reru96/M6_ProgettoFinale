@@ -13,6 +13,7 @@ public class GemCollector : MonoBehaviour
 
     private int totalGems;
     private int collectedGems;
+    private Vector3 lastGemPosition;
 
     public int CollectedGems => collectedGems;
 
@@ -44,6 +45,7 @@ public class GemCollector : MonoBehaviour
 
     public void CollectGem(GameObject gem)
     {
+        lastGemPosition = gem.transform.position;
         Destroy(gem);
         collectedGems++;
 
@@ -71,5 +73,10 @@ public class GemCollector : MonoBehaviour
         {
             portal.SetActive(true);
         }
+    }
+
+    public Vector3 GetLastGemPosition()
+    {
+        return lastGemPosition;
     }
 }
