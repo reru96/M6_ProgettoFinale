@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RailGun : Turret
 {
-    private Transform zone;
+    [SerializeField] private Transform zone;
     private Renderer mat;
 
     protected override void Start()
@@ -21,7 +21,7 @@ public class RailGun : Turret
         if (other.CompareTag("Player") && mat != null)
         {
             mat.material.color = Color.red;
-            isRanged = true;
+            visionCone.isVisible = true;
         }
     }
 
@@ -30,7 +30,13 @@ public class RailGun : Turret
         if (other.CompareTag("Player") && mat != null)
         {
             mat.material.color = Color.white;
-            isRanged = false;
+            visionCone.isVisible = false;
         }
+    }
+
+    protected override void Shoot(float spreadAngle)
+    {
+        firePoint.LookAt(player);
+        base.Shoot(spreadAngle);
     }
 }
