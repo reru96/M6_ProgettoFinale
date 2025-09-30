@@ -55,7 +55,7 @@ public class GemCollector : MonoBehaviour
 
     public Vector3 GetLastGemPosition()
     {
-        if (collectedGems == 0)
+        if (collectedGems < 1 )
         {
             Debug.Log("numero di gemme: " + collectedGems);
 
