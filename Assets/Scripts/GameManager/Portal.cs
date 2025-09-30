@@ -10,13 +10,5 @@ public class Portal : MonoBehaviour
     {
         AudioManager.Instance.PlaySfx(portalSfx);
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            int currentIndex = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(currentIndex + 1);
-
-        }
-    }
+  
 }
